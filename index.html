@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0f1419">
+  <title>Materiais Disponíveis | CHAVES</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">
+        <span class="logo-icon">🎖️</span>
+        <div>
+          <h1>MATERIAIS DISPONÍVEIS</h1>
+          <p class="subtitle">Sistema de Controle de Estoque Militar</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="btnAdmin" class="btn btn-outline">Área do ADM</button>
+        <span id="adminBadge" class="admin-badge hidden">ADM Ativo</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="catalogView">
+      <div class="section-header">
+        <h2>📋 Catálogo de Materiais</h2>
+        <p class="hint">Toque no material para solicitar. Itens zerados não aparecem.</p>
+      </div>
+      <div id="itemsGrid" class="items-grid"></div>
+      <div id="emptyCatalog" class="empty-state hidden"><p>Nenhum material disponível no momento.</p></div>
+    </section>
+
+    <div id="requestModal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Solicitar Material</h3>
+          <button class="close-btn" data-close="requestModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="item-preview" id="requestItemPreview"></div>
+          <form id="requestForm">
+            <input type="hidden" id="reqItemId">
+            <div class="form-group">
+              <label for="reqQty">Quantidade *</label>
+              <input type="number" id="reqQty" min="1" required>
+              <small id="reqMaxHint"></small>
+            </div>
+            <div class="form-group">
+              <label for="reqNip">NIP *</label>
+              <input type="text" id="reqNip" required placeholder="Ex: 12.3456.78" maxlength="20">
+            </div>
+            <div class="form-group">
+              <label for="reqNome">Nome Completo *</label>
+              <input type="text" id="reqNome" required placeholder="Seu nome" maxlength="100">
+            </div>
+            <div class="form-group">
+              <label for="reqSetor">Setor / OM *</label>
+              <input type="text" id="reqSetor" required placeholder="Ex: Seção de Informática" maxlength="100">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Confirmar Solicitação</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="loginModal" class="modal hidden">
+      <div class="modal-content modal-sm">
+        <div class="modal-header">
+          <h3>Login do Administrador</h3>
+          <button class="close-btn" data-close="loginModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="loginForm">
+            <div class="form-group">
+              <label for="loginUser">Usuário</label>
+              <input type="text" id="loginUser" required autocomplete="username">
+            </div>
+            <div class="form-group">
+              <label for="loginPass">Senha</label>
+              <input type="password" id="loginPass" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <section id="adminView" class="hidden">
+      <div class="admin-tabs">
+        <button class="tab-btn active" data-tab="tabItems">Itens</button>
+        <button class="tab-btn" data-tab="tabRequests">Solicitações</button>
+        <button class="tab-btn" data-tab="tabPassword">Senha</button>
+        <button class="tab-btn" id="btnLogout">Sair</button>
+      </div>
+
+      <div id="tabItems" class="tab-content active">
+        <div class="section-header flex-between">
+          <h2>Gerenciar Itens</h2>
+          <button id="btnAddItem" class="btn btn-primary">+ Novo Item</button>
+        </div>
+        <div class="table-wrap">
+          <table id="adminItemsTable">
+            <thead><tr><th>Foto</th><th>Nome</th><th>Qtd</th><th>Ações</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="tabRequests" class="tab-content">
+        <div class="section-header">
+          <h2>Histórico de Solicitações</h2>
+          <p class="hint">Quem retirou o quê e de qual setor</p>
+        </div>
+        <div class="table-wrap">
+          <table id="requestsTable">
+            <thead><tr><th>Data/Hora</th><th>Material</th><th>Qtd</th><th>NIP</th><th>Nome</th><th>Setor</th><th>Ações</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="tabPassword" class="tab-content">
+        <div class="section-header">
+          <h2>Alterar Senha de Acesso</h2>
+          <p class="hint">É necessário a senha mestre para alterar a senha do administrador.</p>
+        </div>
+        <form id="changePassForm" class="form-card">
+          <div class="form-group">
+            <label for="masterPass">Senha Mestre *</label>
+            <input type="password" id="masterPass" required>
+          </div>
+          <div class="form-group">
+            <label for="newPass">Nova Senha de Acesso *</label>
+            <input type="password" id="newPass" required minlength="6">
+          </div>
+          <div class="form-group">
+            <label for="newPassConfirm">Confirmar Nova Senha *</label>
+            <input type="password" id="newPassConfirm" required minlength="6">
+          </div>
+          <button type="submit" class="btn btn-primary">Alterar Senha</button>
+        </form>
+      </div>
+    </section>
+
+    <div id="itemModal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="itemModalTitle">Novo Item</h3>
+          <button class="close-btn" data-close="itemModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="itemForm">
+            <input type="hidden" id="editItemId">
+            <div class="form-group">
+              <label for="itemName">Nome do Material *</label>
+              <input type="text" id="itemName" required maxlength="150">
+            </div>
+            <div class="form-group">
+              <label for="itemQty">Quantidade *</label>
+              <input type="number" id="itemQty" min="0" required>
+            </div>
+            <div class="form-group">
+              <label for="itemPhoto">Foto do item</label>
+              <input type="file" id="itemPhoto" accept="image/*">
+              <small>Toque para escolher uma nova foto</small>
+              <div id="photoPreview" class="photo-preview"></div>
+              <div class="photo-actions" id="photoActions" style="display:none; margin-top:0.4rem;">
+                <button type="button" class="btn btn-sm btn-outline" id="btnRemovePhoto">Remover foto</button>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Salvar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>Criado por <strong>CHAVES</strong> • Sistema Militar de Controle de Materiais</p>
+  </footer>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <div id="lightbox" class="lightbox hidden">
+    <button class="lightbox-close" id="lightboxClose">&times;</button>
+    <img id="lightboxImg" src="" alt="Foto ampliada">
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
